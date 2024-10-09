@@ -5,8 +5,10 @@ public abstract class Organization {
     public Organization(String name, Type type) {
         this.name = name;
         this.type = type;
+        this.financialReportMoney = getNextFinancialReport();
     }
 
+    public final double financialReportMoney;
     private int id = 0;
     private final String name;
     private final Type type;

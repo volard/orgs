@@ -74,7 +74,7 @@ public class MainController {
         }
     }
 
-    public void exportOrganizations() {
+    public boolean exportOrganizations() {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Organizations");
 
@@ -87,20 +87,23 @@ public class MainController {
 
             // Populate data rows
             int rowNum = 1;
-            for (Organization org : organizations) {
+            for (Organization org : organizationRegistry.getRegistry()) {
                 Row row = sheet.createRow(rowNum++);
                 row.createCell(0).setCellValue(org.getId());
-                row.createCell(1).setCellValue(org.getName());
-                row.createCell(2).setCellValue(org.getType().toString());
+                row.createCell(1).setCellValue(org.getCategory().toString());
+                row.createCell(2).setCellValue(org.getName());
+                row.createCell(3).setCellValue(org.getType().toString());
             }
 
             // Write to file
             try (FileOutputStream fileOut = new FileOutputStream("organizations.xlsx")) {
                 workbook.write(fileOut);
             }
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
             // Consider showing an error dialog to the user
+            return false;
         }
     }
 

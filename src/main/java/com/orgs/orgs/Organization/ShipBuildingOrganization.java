@@ -13,6 +13,8 @@ public class ShipBuildingOrganization extends Organization {
         double averageTax = 4652.85;
         double averageRepairsCost = 438630.45;
         double averageInvestmentsAmount = 546899.74;
-        return (Math.random() + 0.8) * averageTax * amountOfPeopleLiving + (Math.random() + 0.3) * averageInvestmentsAmount + averageRepairsCost;
+        return (double) Math.round(
+                ((Math.random() + 0.8) * averageTax * amountOfPeopleLiving +
+                        (Math.random() + 0.3) * averageInvestmentsAmount + averageRepairsCost) * 100) / 100;
     }
 }

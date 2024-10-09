@@ -15,6 +15,8 @@ public class AircraftOrganization extends Organization {
         double averageSalaryPerWorker = 426985386.58;
         double averagePlanePrice = 411698789;
         int workers = 32;
-        return (Math.random() + 0.5) * ((averagePlanePrice - averageCostsPerPlane) * averagePlaneRequests - averageSalaryPerWorker * workers);
+        return (double) Math.round(
+                ((Math.random() + 0.5) * ((averagePlanePrice - averageCostsPerPlane) *
+                        averagePlaneRequests - averageSalaryPerWorker * workers)) * 100) / 100;
     }
 }
