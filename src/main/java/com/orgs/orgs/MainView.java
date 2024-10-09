@@ -65,6 +65,7 @@ public class MainView extends VBox {
         TableColumn<Organization, String> financialColumn = new TableColumn<>(bundle.getString("lastMoney") + ", " + bundle.getString("currencySymbol"));
         financialColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().financialReportMoney)));
 
+        // Adds multiple columns to a JavaFX TableView instance.
         tableView.getColumns().addAll(idColumn, categoryColumn, nameColumn, typeColumn, financialColumn);
 
 

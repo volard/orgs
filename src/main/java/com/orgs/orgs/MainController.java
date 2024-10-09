@@ -73,17 +73,8 @@ public class MainController {
             if (newValue == null || newValue.isEmpty()) {
                 return true;
             }
-
-            String lowerCaseFilter = newValue.toLowerCase();
-
-            // Here you need to define your search criteria
-            // This example assumes YourDataType has a getName() method
-            if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
-                return true;
-            }
-            // Add more conditions here if you want to search on multiple fields
-
-            return false; // Does not match
+            // Search through all object fields
+            return item.getSearchableString().contains(newValue.toLowerCase());
         });
     }
 

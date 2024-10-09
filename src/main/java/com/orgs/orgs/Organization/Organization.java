@@ -46,6 +46,15 @@ public abstract class Organization {
                 "\n";
     }
 
+    public String getSearchableString() {
+        return (this.id +
+                this.name +
+                this.type.getFullName() +
+                this.type.getShortName() +
+                this.category.getName() +
+                this.financialReportMoney).toLowerCase();
+    }
+
 
     public abstract double getNextFinancialReport();
 }
