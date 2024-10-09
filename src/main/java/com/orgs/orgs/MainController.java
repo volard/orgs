@@ -4,8 +4,10 @@ import com.orgs.orgs.Organization.Category;
 import com.orgs.orgs.Organization.Organization;
 import com.orgs.orgs.Organization.OrganizationRegistry;
 import com.orgs.orgs.Organization.Type;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,15 +21,18 @@ import java.util.Random;
 import java.util.ResourceBundle;
 
 public class MainController {
-    private final ObservableList<Organization> organizations;
-    private ResourceBundle bundle;
-    OrganizationRegistry<ObservableList<Organization>> organizationRegistry = new OrganizationRegistry<>(FXCollections.observableArrayList());
+    private final FilteredList<Organization> filteredData;
+    private final ResourceBundle bundle;
+    private final OrganizationRegistry<ObservableList<Organization>> organizationRegistry;
 
     public MainController(ResourceBundle bundle) {
-        organizations = FXCollections.observableArrayList();
         this.bundle = bundle;
+        this.organizationRegistry = new OrganizationRegistry<>(FXCollections.observableArrayList());
+        generateRandomOrganizations();
+        filteredData = new FilteredList<>(organizationRegistry.getRegistry(), p -> true);
+    }
 
-
+    private void generateRandomOrganizations() {
         List<String> generationList = List.of(
                 "Перспектива",
                 "Визави",
@@ -54,6 +59,34 @@ public class MainController {
         }
     }
 
+    public FilteredList<Organization> getFilteredData() {
+        return filteredData;
+    }
+
+    public ObservableList<Organization> getOrganizationRegistry() {
+        return organizationRegistry.getRegistry();
+    }
+
+    public void filterData(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        filteredData.setPredicate(item -> {
+            // If search field is empty, display all items
+            if (newValue == null || newValue.isEmpty()) {
+                return true;
+            }
+
+            String lowerCaseFilter = newValue.toLowerCase();
+
+            // Here you need to define your search criteria
+            // This example assumes YourDataType has a getName() method
+            if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            // Add more conditions here if you want to search on multiple fields
+
+            return false; // Does not match
+        });
+    }
+
     public ObservableList<Organization> getOrganizations() {
         return organizationRegistry.getRegistry();
     }
@@ -70,7 +103,6 @@ public class MainController {
         int index = organizationRegistry.getRegistry().indexOf(oldOrganization);
         if (index != -1) {
             newOrganization.setId(oldOrganization.getId());
-            organizations.set(index, newOrganization);
         }
     }
 
@@ -113,7 +145,7 @@ public class MainController {
 
             Sheet sheet = workbook.getSheetAt(0);
 
-            organizations.clear(); // Clear existing data
+            organizationRegistry.clear(); // Clear existing data
 
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header row

@@ -1,7 +1,6 @@
 package com.orgs.orgs;
 
 import com.orgs.orgs.Organization.Organization;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
@@ -37,6 +36,8 @@ public class MainView extends VBox {
     public MainView(MainController controller, ResourceBundle bundle) {
         this.controller = controller;
         this.bundle = bundle;
+
+        // Set window padding
         setPadding(new Insets(10));
         setSpacing(10);
 
@@ -61,22 +62,21 @@ public class MainView extends VBox {
         categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategory().getName()));
 
         // Money column
-        TableColumn<Organization, Double> financialColumn = new TableColumn<>(bundle.getString("lastMoney") + " " + bundle.getString("currencySymbol"));
-        categoryColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().financialReportMoney));
+        TableColumn<Organization, String> financialColumn = new TableColumn<>(bundle.getString("lastMoney") + ", " + bundle.getString("currencySymbol"));
+        financialColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().financialReportMoney)));
 
-        tableView.getColumns().addAll(idColumn, categoryColumn, nameColumn, typeColumn);
+        tableView.getColumns().addAll(idColumn, categoryColumn, nameColumn, typeColumn, financialColumn);
 
 
         // Bind the table items to the controller's organizations
-        tableView.setItems(controller.getOrganizations());
+        tableView.setItems(controller.getFilteredData());
         tableView.setEditable(true);
-
 
         // Search field
         searchField = new TextField();
         FontIcon searchIcon = new FontIcon(FontAwesomeSolid.SEARCH);
         searchField.setPromptText(bundle.getString("search"));
-
+        searchField.textProperty().addListener(controller::filterData);
 
         // New button
         addButton = new Button(bundle.getString("add"));
@@ -105,10 +105,15 @@ public class MainView extends VBox {
 
         // Place buttons in UI
         HBox buttonBox = new HBox(10, searchIcon, searchField, addButton, deleteButton, modifyButton, exportButton, importButton);
-        HBox.setHgrow(searchField, Priority.ALWAYS);
-        VBox.setVgrow(tableView, Priority.ALWAYS);
-        buttonBox.setAlignment(Pos.CENTER);
 
+        // Stretch search field horizontally
+        HBox.setHgrow(searchField, Priority.ALWAYS);
+
+        // Stretch table view vertically
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+
+        // Align items horizontally to center in controls container
+        buttonBox.setAlignment(Pos.CENTER);
 
         // Add components to the view
         getChildren().addAll(buttonBox, tableView);

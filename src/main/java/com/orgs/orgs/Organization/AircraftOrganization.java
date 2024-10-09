@@ -11,9 +11,9 @@ public class AircraftOrganization extends Organization {
     @Override
     public double getNextFinancialReport() {
         int averagePlaneRequests = 5;
-        double averageCostsPerPlane = 5461345.91;
-        double averageSalaryPerWorker = 426985386.58;
-        double averagePlanePrice = 411698789;
+        double averageCostsPerPlane = 54345.91;
+        double averageSalaryPerWorker = 4985386.58;
+        double averagePlanePrice = 48789;
         int workers = 32;
         return (double) Math.round(
                 ((Math.random() + 0.5) * ((averagePlanePrice - averageCostsPerPlane) *
