@@ -16,11 +16,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 
@@ -35,10 +38,12 @@ public class MainView extends VBox {
     private final Button exportButton;
     private final Button importButton;
     private final MainController controller;
+    private final Stage primaryStage;
 
     public MainView(MainController controller, ResourceBundle bundle) {
         this.controller = controller;
         this.bundle = bundle;
+        this.primaryStage = new Stage();
 
         // Set window padding
         setPadding(new Insets(10));
@@ -66,7 +71,7 @@ public class MainView extends VBox {
 
         // Money column
         TableColumn<Organization, String> financialColumn = new TableColumn<>(bundle.getString("lastMoney") + ", " + bundle.getString("currencySymbol"));
-        financialColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().financialReportMoney)));
+        financialColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getFinancialReportMoney())));
 
         // Adds multiple columns to a JavaFX TableView instance.
         tableView.getColumns().addAll(idColumn, categoryColumn, nameColumn, typeColumn, financialColumn);
@@ -125,14 +130,36 @@ public class MainView extends VBox {
         addButton.setOnAction(e -> addOrganization());
         deleteButton.setOnAction(e -> deleteOrganization());
         exportButton.setOnAction(e -> exportOrganizations());
-        importButton.setOnAction(e -> controller.importOrganizations());
+        importButton.setOnAction(e -> importOrganizations());
     }
 
     private void exportOrganizations() {
-        if (controller.exportOrganizations()) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Organizations");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx")
+        );
+        File file = fileChooser.showSaveDialog(primaryStage);
+        if (file != null) {
+            controller.exportOrganizations(file);
             Notification.showNotification(bundle, NotificationType.SUCCESS, "");
-        } else {
-            Notification.showNotification(bundle, NotificationType.ERROR, "");
+        }
+    }
+
+    private void importOrganizations() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import Organizations");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx")
+        );
+        File file = fileChooser.showOpenDialog(primaryStage);
+        if (file != null) {
+            try {
+                controller.importOrganizations(file);
+            } catch (IOException ex) {
+                // Handle exception (e.g., show an error dialog)
+                ex.printStackTrace();
+            }
         }
     }
 

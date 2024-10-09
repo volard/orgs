@@ -42,7 +42,7 @@ public class OrganizationRegistry<T extends List<Organization>> {
         return registry.add(organization);
     }
 
-    public void create(String name, Type type, Category category, int id) {
+    public void create(String name, Type type, Category category, int id, Double financialReportMoney) {
         Organization org = switch (category) {
             case Aircraft -> new AircraftOrganization(name, type);
             case Insurance -> new InsuranceOrganization(name, type);
@@ -50,11 +50,16 @@ public class OrganizationRegistry<T extends List<Organization>> {
         };
 
         org.setId(id);
+
+        if (financialReportMoney != null) {
+            org.setFinancialReportMoney(financialReportMoney);
+        }
+
         registry.add(org);
     }
 
     public void create(String name, Type type, Category category) {
-        create(name, type, category, generateUID());
+        create(name, type, category, generateUID(), null);
     }
 
     public boolean delete(int id) {

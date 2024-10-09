@@ -7,15 +7,14 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.net.MalformedURLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Application extends javafx.application.Application {
     @Override
-    public void start(Stage stage) throws MalformedURLException {
+    public void start(Stage stage) {
 
-        Locale locale = Locale.forLanguageTag("ru"); // You can set this to a specific locale if needed
+        Locale locale = Locale.forLanguageTag("ru");
         ResourceBundle bundle = ResourceBundle.getBundle("com.orgs.orgs.Strings", locale);
 
         // Custom stylesheet

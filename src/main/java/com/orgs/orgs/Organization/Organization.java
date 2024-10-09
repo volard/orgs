@@ -8,7 +8,7 @@ public abstract class Organization {
         this.financialReportMoney = getNextFinancialReport();
     }
 
-    public final double financialReportMoney;
+    private double financialReportMoney;
     private int id = 0;
     private final String name;
     private final Type type;
@@ -30,6 +30,14 @@ public abstract class Organization {
 
     public Type getType() {
         return this.type;
+    }
+
+    public double getFinancialReportMoney() {
+        return this.financialReportMoney;
+    }
+
+    public void setFinancialReportMoney(double financialReportMoney) {
+        this.financialReportMoney = financialReportMoney;
     }
 
     public int getId() {

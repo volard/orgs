@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -99,10 +100,6 @@ public class MainController {
         return filteredData;
     }
 
-    public ObservableList<Organization> getOrganizationRegistry() {
-        return organizationRegistry.getRegistry();
-    }
-
     public void filterData(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         filteredData.setPredicate(item -> {
             // If search field is empty, display all items
@@ -114,14 +111,6 @@ public class MainController {
         });
     }
 
-    public ObservableList<Organization> getOrganizations() {
-        return organizationRegistry.getRegistry();
-    }
-
-    public void addOrganization(Organization organization) {
-        organizationRegistry.add(organization);
-    }
-
     public void createOrganization(String name, Type type, Category category) {
         organizationRegistry.create(name, type, category);
     }
@@ -130,14 +119,7 @@ public class MainController {
         organizationRegistry.delete(organization);
     }
 
-    public void modifyOrganization(Organization oldOrganization, Organization newOrganization) {
-        int index = organizationRegistry.getRegistry().indexOf(oldOrganization);
-        if (index != -1) {
-            newOrganization.setId(oldOrganization.getId());
-        }
-    }
-
-    public boolean exportOrganizations() {
+    public void exportOrganizations(File file) {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Organizations");
 
@@ -147,6 +129,7 @@ public class MainController {
             headerRow.createCell(1).setCellValue(bundle.getString("category"));
             headerRow.createCell(2).setCellValue(bundle.getString("name"));
             headerRow.createCell(3).setCellValue(bundle.getString("type"));
+            headerRow.createCell(4).setCellValue(bundle.getString("lastMoney"));
 
             // Populate data rows
             int rowNum = 1;
@@ -156,22 +139,21 @@ public class MainController {
                 row.createCell(1).setCellValue(org.getCategory().toString());
                 row.createCell(2).setCellValue(org.getName());
                 row.createCell(3).setCellValue(org.getType().toString());
+                row.createCell(4).setCellValue(org.getFinancialReportMoney());
             }
 
             // Write to file
-            try (FileOutputStream fileOut = new FileOutputStream("organizations.xlsx")) {
+            try (FileOutputStream fileOut = new FileOutputStream(file)) {
                 workbook.write(fileOut);
             }
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
             // Consider showing an error dialog to the user
-            return false;
         }
     }
 
-    public void importOrganizations() {
-        try (FileInputStream fileIn = new FileInputStream("organizations.xlsx");
+    public void importOrganizations(File file) throws IOException {
+        try (FileInputStream fileIn = new FileInputStream(file);
              Workbook workbook = new XSSFWorkbook(fileIn)) {
 
             Sheet sheet = workbook.getSheetAt(0);
@@ -185,20 +167,13 @@ public class MainController {
                 Category category = Category.valueOf(row.getCell(1).getStringCellValue());
                 String name = row.getCell(2).getStringCellValue();
                 Type type = Type.valueOf(row.getCell(3).getStringCellValue());
+                double lastMoney = row.getCell(4).getNumericCellValue();
 
-                organizationRegistry.create(name, type, category, id);
+                organizationRegistry.create(name, type, category, id, lastMoney);
             }
         } catch (IOException e) {
             e.printStackTrace();
             // Consider showing an error dialog to the user
         }
-    }
-
-    public ObservableList<Organization> searchOrganizations(String query) {
-        return organizationRegistry.getRegistry().filtered(org ->
-                String.valueOf(org.getId()).contains(query) ||
-                        org.getName().contains(query) ||
-                        org.getType().toString().contains(query)
-        );
     }
 }
