@@ -1,4 +1,4 @@
-package com.orgs.orgs;
+package com.orgs.orgs.genericUI;
 
 public enum NotificationType {
     SUCCESS,

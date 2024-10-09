@@ -1,6 +1,8 @@
 package com.orgs.orgs;
 
 import atlantafx.base.theme.PrimerDark;
+import com.orgs.orgs.main.MainController;
+import com.orgs.orgs.main.MainView;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;

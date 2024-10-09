@@ -1,4 +1,4 @@
-package com.orgs.orgs;
+package com.orgs.orgs.main;
 
 import com.orgs.orgs.Organization.Category;
 import com.orgs.orgs.Organization.Organization;
@@ -46,7 +46,43 @@ public class MainController {
                 "Хорошо и ещё хуже",
                 "Расточительная компания", "Вкусно и тупо",
                 "Напитки пригорья",
-                "Зажиточный минимум"
+                "Зажиточный минимум",
+                "Космические огурцы",
+                "Бюрократия и сыновья",
+                "Вечный двигатель",
+                "Карманная вселенная",
+                "Облачный подвал",
+                "Гениальный тупик",
+                "Светлое завтра",
+                "Бумажный небоскрёб",
+                "Прогресс наоборот",
+                "Квантовая лопата",
+                "Философский камень",
+                "Вечный двигатель торговли",
+                "Параллельные миры",
+                "Созидательный хаос",
+                "Пятое колесо",
+                "Воздушные замки",
+                "Цифровой борщ",
+                "Галактический валенок",
+                "Квантовая ложка",
+                "Парадоксальные решения",
+                "Вечнозелёный асфальт",
+                "Умные бублики",
+                "Космическая лапша",
+                "Высокие технологии низин",
+                "Подводный воздухоплаватель",
+                "Гравитационный пух",
+                "Мягкое железо",
+                "Горячий снег",
+                "Твёрдая вода",
+                "Летающие корни",
+                "Подземное солнце",
+                "Невидимый прожектор",
+                "Громкая тишина",
+                "Квадратный круг",
+                "Сухой дождь",
+                "Медленный экспресс"
         );
 
 
@@ -84,6 +120,10 @@ public class MainController {
 
     public void addOrganization(Organization organization) {
         organizationRegistry.add(organization);
+    }
+
+    public void createOrganization(String name, Type type, Category category) {
+        organizationRegistry.create(name, type, category);
     }
 
     public void deleteOrganization(Organization organization) {

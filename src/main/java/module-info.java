@@ -13,5 +13,9 @@ module com.orgs.orgs {
     opens com.orgs.orgs to javafx.fxml;
     exports com.orgs.orgs;
     exports com.orgs.orgs.Organization;
+    exports com.orgs.orgs.main;
+    opens com.orgs.orgs.main to javafx.fxml;
+    exports com.orgs.orgs.genericUI;
+    opens com.orgs.orgs.genericUI to javafx.fxml;
 
 }

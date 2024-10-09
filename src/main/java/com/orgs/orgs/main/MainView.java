@@ -1,10 +1,14 @@
-package com.orgs.orgs;
+package com.orgs.orgs.main;
 
 import com.orgs.orgs.Organization.Organization;
+import com.orgs.orgs.genericUI.Notification;
+import com.orgs.orgs.genericUI.NotificationType;
+import com.orgs.orgs.newOrg.AddOrganizationController;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -12,8 +16,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-import org.controlsfx.control.Notifications;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -28,7 +32,6 @@ public class MainView extends VBox {
     private final TextField searchField;
     private final Button addButton;
     private final Button deleteButton;
-    private final Button modifyButton;
     private final Button exportButton;
     private final Button importButton;
     private final MainController controller;
@@ -89,11 +92,6 @@ public class MainView extends VBox {
         FontIcon trashIcon = new FontIcon(FontAwesomeSolid.TRASH);
         deleteButton.setGraphic(trashIcon);
 
-        // Modify button
-        modifyButton = new Button(bundle.getString("modify"));
-        FontIcon editIcon = new FontIcon(FontAwesomeSolid.EDIT);
-        modifyButton.setGraphic(editIcon);
-
         // Export button
         exportButton = new Button(bundle.getString("export"));
         FontIcon exportIcon = new FontIcon(FontAwesomeSolid.FILE_EXPORT);
@@ -105,7 +103,7 @@ public class MainView extends VBox {
         importButton.setGraphic(importIcon);
 
         // Place buttons in UI
-        HBox buttonBox = new HBox(10, searchIcon, searchField, addButton, deleteButton, modifyButton, exportButton, importButton);
+        HBox buttonBox = new HBox(10, searchIcon, searchField, addButton, deleteButton, exportButton, importButton);
 
         // Stretch search field horizontally
         HBox.setHgrow(searchField, Priority.ALWAYS);
@@ -126,45 +124,36 @@ public class MainView extends VBox {
     private void setupEventHandlers() {
         addButton.setOnAction(e -> addOrganization());
         deleteButton.setOnAction(e -> deleteOrganization());
-        modifyButton.setOnAction(e -> modifyOrganization());
         exportButton.setOnAction(e -> exportOrganizations());
         importButton.setOnAction(e -> controller.importOrganizations());
-        searchField.setOnAction(e -> searchOrganizations());
     }
-
-    private void showNotification(NotificationType type, String message) {
-        switch (type) {
-            case ERROR -> Notifications.create()
-                    .title(bundle.getString("notificationErrorTitle"))
-                    .text(message)
-                    .hideAfter(Duration.seconds(5))
-                    .showError();
-            case INFO -> Notifications.create()
-                    .title(bundle.getString("notificationInfoTitle"))
-                    .text(message)
-                    .hideAfter(Duration.seconds(5))
-                    .showInformation();
-            case SUCCESS -> Notifications.create()
-                    .title(bundle.getString("notificationSuccessTitle"))
-                    .text(message)
-                    .hideAfter(Duration.seconds(5))
-                    .showConfirm();
-        }
-    }
-
 
     private void exportOrganizations() {
         if (controller.exportOrganizations()) {
-            showNotification(NotificationType.SUCCESS, "");
+            Notification.showNotification(bundle, NotificationType.SUCCESS, "");
         } else {
-            showNotification(NotificationType.ERROR, "");
+            Notification.showNotification(bundle, NotificationType.ERROR, "");
         }
     }
 
     private void addOrganization() {
-        // Show a dialog to get new organization details
-        // For simplicity, we're just adding a dummy organization here
+        Stage addStage = new Stage();
+        addStage.initModality(Modality.APPLICATION_MODAL);
+        addStage.setTitle(bundle.getString("newOrgTitle"));
 
+        AddOrganizationController addController = new AddOrganizationController(addStage, bundle);
+        Scene scene = new Scene(addController.getView(), 480, 200);
+        addStage.setScene(scene);
+
+        addStage.showAndWait();
+
+        if (addController.getOrganizationDataHolder().getName() != null && !addController.getOrganizationDataHolder().getName().isEmpty()) {
+            controller.createOrganization(
+                    addController.getOrganizationDataHolder().getName(),
+                    addController.getOrganizationDataHolder().getType(),
+                    addController.getOrganizationDataHolder().getCategory()
+            );
+        }
     }
 
     private void deleteOrganization() {
@@ -172,21 +161,5 @@ public class MainView extends VBox {
         if (selectedOrganization != null) {
             controller.deleteOrganization(selectedOrganization);
         }
-    }
-
-    private void modifyOrganization() {
-        Organization selectedOrganization = tableView.getSelectionModel().getSelectedItem();
-        if (selectedOrganization != null) {
-            // Show a dialog to get modified organization details
-            // For simplicity, we're just modifying the name here
-//            Organization modifiedOrganization = new ConcreteOrganization("Modified Org", selectedOrganization.getType());
-//            controller.modifyOrganization(selectedOrganization, modifiedOrganization);
-        }
-    }
-
-    private void searchOrganizations() {
-        String query = searchField.getText();
-//        ObservableList<Organization> searchResults = controller.searchOrganizations(query);
-//        tableView.setItems(searchResults);
     }
 }
