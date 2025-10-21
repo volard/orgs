@@ -14,7 +14,7 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) {
 
-        Locale locale = Locale.forLanguageTag("ru");
+        Locale locale = Locale.forLanguageTag("en");
         ResourceBundle bundle = ResourceBundle.getBundle("com.orgs.orgs.Strings", locale);
 
         // Custom stylesheet
